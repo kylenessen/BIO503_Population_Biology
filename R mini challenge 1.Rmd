@@ -1,0 +1,118 @@
+---
+title: "BIO 445 Challenge Week 1"
+author: "Kyle Nessen"
+date: "2023-09-26"
+output: html_document
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+# Step 3 Question
+
+**Prompt:** Create 3 vectors. Give the vectors logical names of your
+choosing - Vector one contains the integers 10 through 15 - Vector two
+contains odd numbers 3 through 13. You can manually type out these
+numbers and combine them into a vector. For an extra challenge try to
+use the seq() function. The arguments inside the seq function that you
+will need to specify are from, to, and by. See this website
+<https://www.statology.org/seq-function-in-r/> for examples and help.
+You can also find details for seq() on the cheatsheet handed out in
+class. - Vector three contains the product (multiplication) of vector 1
+and vector 2
+
+## Vector one
+
+```{r}
+vector_one <- 10:15 # creates a variable with the integers 10 through 15
+vector_one # prints vector_one
+```
+
+## Vector two
+
+```{r}
+vector_two <- seq(from=3, to=13, by=2) #starts at 3, and skips even numbers till it reaches 13
+vector_two
+
+```
+
+## Vector three
+
+```{r}
+vector_three <- vector_one * vector_two # multiply the two variables
+vector_three
+```
+
+# Step 4 Question
+
+**Prompt:** Join the 3 vectors together to create a two-dimensional data
+structure where the first vector is column 1, the second vector is
+column 2, and the third vector is column 3
+
+```{r}
+df <- data.frame("column1" = vector_one, "column2" = vector_two, "column3" = vector_three) # create a dataframe
+df
+
+```
+
+# Step 5 Question
+
+**Prompt:** Write a line of code to determine what type of object you
+have. Is it a matrix or data frame?
+
+```{r}
+class(df) # check the class of my df variable
+```
+
+# Step 6 Question
+
+**Prompt:** Write a line of code to extract the dimensions of your
+two-dimensional object. Hint: like many things in R, there are multiple
+ways to do this. Can you get this information with a single function?
+What is another way to get the same information using two separate
+functions?
+
+```{r}
+dim(df) # returns the dimensions of the dataframe (rows, columns)
+```
+
+# Step 7 Question
+
+**Prompt:** Write code to: - Find the mean of column 3 - Find the
+maximum value of row 1
+
+## Mean of column 3
+
+```{r}
+mean(df$column3) # calculate mean of column 3
+```
+
+## Maximum value of row 1
+
+```{r}
+row_1_values <- df[1,]
+max(row_1_values)
+```
+
+# Step 8 Question
+
+**Prompt:** Install the palmerpenguins package. We will use this package
+in next week's challenge. Load the newly installed package using the
+library() function. Write a line of code to use the Help to learn about
+palmerpenguins.
+
+## Install palmerpenguins
+
+```{r}
+install.packages('palmerpenguins')
+```
+
+## load library and run Help function
+
+```{r}
+library(palmerpenguins)
+help(package='palmerpenguins')
+```
+
+
+

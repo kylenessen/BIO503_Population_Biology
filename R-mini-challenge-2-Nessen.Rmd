@@ -1,0 +1,321 @@
+---
+title: "R Mini Challenge 2"
+author: "Kyle Nessen"
+date: "2023-10-03"
+output: html_document
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+# Step 1
+
+*Load the palmerpenguins package using the library() function. If you
+did not complete last week's challenge, you will need to install this
+package. Load the associated dataset using data(penguins)*
+
+```{r}
+library(palmerpenguins) # load palmerpenguins library
+```
+
+# Step 2
+
+*Familiarize yourself with the penguins data frame. - Write a line of
+code to examine the first 6 rows of penguins. - How many columns are
+there? You can see this when looking at the output of the previous step,
+but you can also write code to extract this information. What function
+would you use? - Examine the structure of the data frame. You will need
+to figure out which function to use to do this. How many columns contain
+integers? - When looking at the structure of penguins, you should be
+able to see that multiple variables in the data frame are stored as
+factors. We have not discussed these yet. Factors are really important
+when performing statistical analyses in R as they represent categorical
+variables with different levels. Sometimes we need to convert data
+stored as characters into factors before using the data in a statistical
+test. Read about factors in R here
+(<https://swcarpentry.github.io/r-novice-inflammation/12-supp-factors/>)*
+
+Loading the penguin data and looking ate first few rows
+
+```{r}
+df <- penguins # load penguins data as "df"
+head(df,6) #return first 6 rows
+```
+
+Counting number of columns in the dataframe
+
+```{r}
+ncol(df) # Returns the number of columns (8)
+```
+
+Returning all columns that are integers
+
+```{r}
+# Identify columns that are integers
+intCols <- sapply(df, is.integer)
+
+# Pull names of columns that are integers
+integer_column_names <- names(intCols)[intCols]
+
+# Print names
+print(integer_column_names)
+
+```
+
+Returning all columns that are factors.
+
+```{r}
+# Identify columns that are factors
+factorCols <- sapply(df, is.factor)
+
+# Extract names of columns where is.factor is TRUE
+factor_column_names <- names(factorCols)[factorCols]
+
+# Print the names of factor columns
+print(factor_column_names)
+
+```
+
+Factors are a datatype that captures categorical information, such as
+sex, or species name. They are different than normal string data which
+can have any textual information.
+
+# Step 3
+
+*It is not uncommon for large data sets to contain missing values or
+NAs. It is important to be aware of these missing values before
+proceeding with any analysis. Use the summary() function to identify
+which columns in penguins contains NAs. Write an annotation in your
+script to make note of what you find.*
+
+Running summary() on the data
+
+```{r}
+summary(df)
+```
+
+It appears that `bill_length_mm`, `bill_depth_mm`, `flipper_length_mm`,
+and `body_mass_g` all have two missing values (NA), while `sex` has 11
+missing values.
+
+# Step 4
+
+*Recall that one way of extracting a column from a data frame is to use
+the following notation dataframe\$column. For example, we can extract
+the column containing penguin bill length measurements as follows:
+penguins\$bill_length_mm Write three lines of code to extract the
+columns for the 3 other morphometric variables (body mass, flipper
+length, bill depth)? Be careful and pay close attention to the way the
+column names are formatted. Remember that R needs them to match
+perfectly!*
+
+```{r}
+df$body_mass_g
+df$body_mass_g
+df$flipper_length_mm
+```
+
+# Step 5
+
+*We often want to examine the distribution of a continuous variable
+before testing for any statistical relationships. R contains a large
+number of ways to plot and visualize data. In base R (no packages
+needed), the hist() function will make a basic histogram, which is great
+for exploring data (less great if making a figure for a final report or
+publication).*
+
+-   *Use the following code to make a histogram of penguin bill length:*
+
+    -   *`hist(penguins$bill_length_mm)`*
+
+-   *Now, write code to make 3 additional histograms for the remaining 3
+    morphometric variables (body mass, flipper length, and bill depth).*
+
+-   *How would you describe the shape of the histogram for each? Are the
+    variables normally distributed?*
+
+## Bill Length
+
+Perhaps slightly bimodal?
+
+```{r}
+hist(df$bill_length_mm) # Plot data distribution
+shapiro.test(df$bill_length_mm) # Testing for normalcy (not normal)
+```
+
+## Body Mass
+
+Skewed right
+
+```{r}
+hist(df$body_mass_g) # Plot data distribution
+shapiro.test(df$body_mass_g) # Testing for normalcy (not normal)
+```
+
+## Bill Depth
+
+Bimodal with a skew to the left
+
+```{r}
+hist(df$bill_depth_mm) # Plot data distribution
+shapiro.test(df$bill_depth_mm) # Testing for normalcy (not normal)
+```
+
+# Step 6
+
+*Another useful type of plot for exploring data is a scatterplot which
+can be used to visualize the relationship between two continuous
+variables. For example, we might expect that penguins with longer bill
+also have deeper bills.*
+
+*• Use the following code to visualize this relationship:*
+
+*`plot(y = penguins$bill_length_mm, x = penguins$bill_depth_mm)`*
+
+```{r}
+plot(y = df$bill_length_mm, x = df$bill_depth_mm)
+```
+
+*• Notice that we have specified which variable we want on the x-axis
+and which we want on the y-axis inside the plot() function.*
+
+*• What do you think after examining this plot? Is there visual evidence
+of a positive correlation between the two variables?*
+
+From first glance, I do not see a correlation.
+
+*• We may also expect that the body mass and flipper length of penguins
+are positively correlated. Make a scatterplot to visualize this
+relationship. Put body mass on the x-axis and flipper length on the
+y-axis.*
+
+```{r}
+plot(x = df$body_mass_g, y = df$ flipper_length_mm)
+```
+
+*• What conclusion do you reach after examining this plot? Does there
+appear to be a positive correlation between these two variables? Note:
+this relationship should be a lot easier to interpret than the first
+scatterplot of bill morphometrics.*
+
+Yes, this graph seems to show a clear positive correlation, where
+flipper size increases with body mass
+
+# Step 7
+
+*Sometimes we want to explore the relationship between a continuous
+variable and a categorical variable. For example, we may be curious as
+to whether penguins are sexually dimorphic. Another way of phrasing this
+is: do male and female penguins have different sized bodies? We can use
+a boxplot to explore this relationship.*
+
+*• Try the following line of code:*
+
+*`boxplot(penguins$body_mass_g ~ penguins$sex)`*
+
+```{r}
+boxplot(df$body_mass_g ~ df$sex)
+```
+
+*• The \~ symbol in R can be read "as a function of", so this boxplot is
+showing body mass as a function of sex. Note that the continuous
+variable is specified first followed by the categorial variable
+(factor).*
+
+*• The thick black lines on the boxplot show the median value. Using the
+plot, estimate the median body mass of males and females. Write an
+annotation in your script that lists your estimates.*
+
+**Female median value:** 3550
+
+**Male median value:** 4200
+
+*• Check your estimates using code. There are many ways to do this. One
+way that we have seen before (refer to Intro to R script from week 1,
+see line 269 and on) is to use the subset() function to extract all the
+data for female penguins and then a second line of code to find the
+median body mass. See if you can write out in words what each line is
+doing:*
+
+*`females <- subset(penguins, sex == "female" )`*
+
+*`median(females$body_mass_g)`*
+
+```{r}
+females <- subset(df, sex == "female" ) # create a new dataframe that only has female data
+median(females$body_mass_g) # calculates median for body mass
+```
+
+*Use the copy, paste, edit approach to find the median body mass for
+male penguins*
+
+```{r}
+males <- subset(df, sex == "male" ) # create a new dataframe that only has male data
+median(males$body_mass_g) # calculates median for body mass
+```
+
+# Step 8
+
+*This data set contains a number of other categorical variables. Next,
+we will explore the relationship between body morphometrics and species.
+There are three penguin species in Antarctica: Adelie, Chinstrap, and
+Gentoo penguins. Let's figure out which species is largest.*
+
+*• Make a boxplot of flipper length as a function of species*
+
+```{r}
+boxplot(df$flipper_length_mm~df$species)
+```
+
+*• Make a 2nd boxplot of body mass as a function of species*
+
+```{r}
+boxplot(df$body_mass_g~df$species)
+```
+
+*• Which species is largest based on these two morphometrics?*
+
+**Gentoo**
+
+*• Write a line of code to subset the data so that it only contains the
+species you have identified as the largest.*
+
+```{r}
+gentoo = subset(df,df$species == "Gentoo")
+head(gentoo)
+```
+
+*• Examine the summary for this reduced data frame that only contains
+the largest species.*
+
+```{r}
+summary(gentoo)
+```
+
+*Notice that the data contains NAs!*
+
+*• Write a line of code to find the mean body mass for this species. You
+will need to add the argument na.rm = T inside the function to ignore
+the NA. Use the help in the lower right pane of RStudio for guidance.*
+
+```{r}
+mean(gentoo$body_mass_g, na.rm = TRUE)
+```
+
+*• Look at the boxplot for body mass by species. If we performed a
+statistical test to compare the average body mass of each species (e.g.,
+an ANOVA), what do you think the conclusions would be? Write three
+sentences that state the relationship for each pairwise combination of
+penguin species (1. Adelie/Gentoo, 2. Adelie/Chinstrap, 3.
+Chinstrap/Gentoo). Relationships can be greater than, less than, or
+equal. Here is an example based on flipper length for Adelie compared
+with Gentoo: "The average flipper of Adelie penguins is less than the
+average flipper length of Gentoo penguins"*
+
+```{r}
+boxplot(df$body_mass_g~df$species)
+```
+
+1.  The average body mass of Gentoo is greater than Chinstrap
+2.  The average body mass of Gentoo is greater than Adelie
+3.  The average body mass of Chinstrap is equal to Adelie
